@@ -1,0 +1,2 @@
+# teollisuuden-iot-harjoitustyo
+ 
