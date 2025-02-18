@@ -31,7 +31,6 @@ class Program {
         app.UseCors("AllowReactApp");
 
         app.MapGet("/", () => GetHelloWorld());
-        app.MapGet("/api/gripper", () => GetGripper());
         app.MapGet("/api/gripperlatest", () => GetGripperLatest());
 
         Task.Run(() => ReadRobo());
@@ -43,18 +42,11 @@ class Program {
         return "Hello World!";
     }
 
-    static string GetGripperLatest() {
-        return content.ToString();
-    }
+    static JsonObject GetGripperLatest() {
+        JsonObject parsedContent = JsonNode.Parse(content.ToString()) as JsonObject;        
+        Console.WriteLine("parsedContent: " + parsedContent + "\n");
 
-    static JsonObject GetGripper() {
-        var jsonArray = new JsonArray();
-        foreach (var data in gripperData) {
-            jsonArray.Add(JsonNode.Parse(data));
-        }
-        var jsonObject = new JsonObject();
-        jsonObject["gripperData"] = jsonArray;
-        return jsonObject;
+        return parsedContent ?? new JsonObject();
     }
 
     static async Task ReadRobo() {
@@ -65,7 +57,7 @@ class Program {
                 var response = await client.GetAsync($"{urlIosystemGripper}?json=1");
                 var _content = await response.Content.ReadAsStringAsync();
 
-                Console.WriteLine("gripper: " + _content + "\n");
+                // Console.WriteLine("gripper: " + _content + "\n");
 
                 content = _content;
                 gripperData.Add(_content);
