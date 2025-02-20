@@ -43,11 +43,15 @@ class Program {
     }
 
     static JsonObject GetGripperLatest() {
-        JsonObject parsedContent = JsonNode.Parse(content.ToString()) as JsonObject;        
+    try {
+        JsonObject parsedContent = JsonNode.Parse(content) as JsonObject;
         Console.WriteLine("parsedContent: " + parsedContent + "\n");
-
         return parsedContent ?? new JsonObject();
+
+    } catch (JsonException) {
+        return new JsonObject();
     }
+}
 
     static async Task ReadRobo() {
         var handler = new HttpClientHandler { Credentials = new System.Net.NetworkCredential(username, password) };
@@ -58,9 +62,9 @@ class Program {
                 var _content = await response.Content.ReadAsStringAsync();
 
                 // Console.WriteLine("gripper: " + _content + "\n");
-
+                System.Console.WriteLine(_content);
                 content = _content;
-                gripperData.Add(_content);
+                // gripperData.Add(_content);
 
                 await Task.Delay(1000);
             }
